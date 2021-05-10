@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>我的任务</title>
+
+    <link rel="shortcut icon" href="assets/img/logo2x.png"/>
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet"/>
+    <!--external css-->
+    <link rel="stylesheet" type="text/css" href="assets/font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/zabuto_calendar.css">
+    <link rel="stylesheet" type="text/css" href="assets/js/gritter/css/jquery.gritter.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/lineicons/style.css">
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/style-responsive.css" rel="stylesheet">
+
+    <script src="assets/js/chart-master/Chart.js"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<section id="container">
+
+    <div th:replace="tools :: header"></div>
+
+    <div th:replace="tools :: sidebar "></div>
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper site-min-height">
+            <div class="form-panel">
+                <div class="btn-group">
+                    <button class="btn " onclick="window.history.back()"><i class="fa fa-angle-left"></i> 返回</button>
+                    <button class="btn " onclick="javascript:location.reload();"><i class="fa fa-refresh"></i> 刷新
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-panel">
+                        <h3 class="text-center" th:text="${titel}"><i class="fa fa-angle-right"></i><i
+                                class="fa fa-angle-left"></i></h3>
+                        <table class="table table-striped table-advance table-hover">
+                            <thead class="table-bordered">
+                            <tr class="bg-success">
+                                <th><i class="fa fa-sort-numeric-asc"></i> 任务id</th>
+                                <th><i class="fa fa-user"></i> 申请人</th>
+                                <th><i class="fa fa-calendar"></i> 申请日期</th>
+                                <th><i class="fa fa-calendar-check-o"></i> 任务日期</th>
+                                <th><i class=" fa fa-pencil"></i> 备注</th>
+                                <th><i class="fa fa-circle-o"></i>状态</th>
+                                <th><i class=" fa fa-cog"></i> 操作</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:each="task : ${tasks}">
+                                <td>
+                                    <a th:href="'/viewtask?taskid=' + ${task.taskid}" th:text="${task.taskid}"></a>
+                                </td>
+                                <td th:text="${task.approver}">andy</td>
+                                <td th:text="${task.apdate}"></td>
+                                <td th:text="${task.tasktime}"></td>
+                                <td th:text="${task.extra}"></td>
+                                <td th:text="${task.state}"></td>
+                                <td>
+                                    <div th:if="${task.state} == 已提交">
+                                        <button class="btn btn-sm btn-success" onclick="handleTask(this,'act')">接受</button>
+                                        <button class="btn btn-sm btn-danger btnreject" >拒绝</button>
+                                    </div>
+                                    <div th:if="${task.state} == 处理中">
+                                        <button class="btn btn-sm btn-success" onclick="handleTask(this,'done')">完成</button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                            <tfoot>
+
+                            </tfoot>
+
+                        </table>
+                        <div class="inline-block form-inline">
+                            <button class="btn" onclick="switchPage('pre')"> 上一页</button>
+                            <button class="btn" onclick="switchPage('nxt')"> 下一页</button>
+                            <button class="btn" onclick="switchPage('goto')">前往</button>
+                            <input type="number" class="form-control" placeholder="页码">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </section>
+        <! --/wrapper -->
+
+    </section>
+
+    <!--main content end-->
+
+    <!--**********************************************************************************************
+    Footer
+    **********************************************************************************************-->
+
+    <!--footer start-->
+    <footer class="site-footer">
+        <div class="text-center">
+            Copyright © 2018 David Bai
+            <a href="#main-content" class="go-top">
+                <i class="fa fa-angle-up"></i>
+            </a>
+        </div>
+    </footer>
+    <!--footer end-->
+</section>
+
+<!-- Modal -->
+<div id="rjtReg" aria-hidden="true" role="dialog" class="modal fade" hidden>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                <h4 class="modal-title">是否要拒绝</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="taskid" hidden>
+                <h3>请说明原因</h3>
+                <textarea class="form-control" rows="10" id="extra"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-danger" type="button">取消</button>
+                <button class="btn btn-success reject" type="button" onclick="handleTask(this,'rjt')">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal -->
+
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="assets/js/jquery.js"></script>
+<script src="assets/js/jquery-1.8.3.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script class="include" type="text/javascript" src="assets/js/jquery.dcjqaccordion.2.7.js"></script>
+<script src="assets/js/jquery.scrollTo.min.js"></script>
+<script src="assets/js/jquery.nicescroll.js" type="text/javascript"></script>
+<script src="assets/js/jquery.sparkline.js"></script>
+
+<!--common script for all pages-->
+<script src="assets/js/common-scripts.js"></script>
+
+<script>
+    var taskid;
+    $(".btnreject").click(function () {
+        var x = $(this).parent().parent().parent().find("a");
+        taskid = x.text();
+        $("#rjtReg").modal("toggle");
+    });
+
+    function handleTask(row, opt) {
+        var reason = $("#extra").val();
+        if("act" == opt){
+            var x = $(row).parent().parent().parent().find("a");
+            taskid = x.text();
+            if(confirm("确认接受吗？")){
+                $.post("/handletask", {taskid: taskid, opt: opt}, function (data) {
+                    alert(data.message);
+                    window.location.reload();
+                });
+            }
+        }
+        if("rjt" == opt){
+            if(confirm("确认拒绝吗？")){
+                $.post("/handletask", {taskid: taskid, opt: opt,reason:reason}, function (data) {
+                    alert(data.message);
+                    window.location.reload();
+                });
+            }
+        }
+
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="bai.dao.AdminDao">
+
+    <select id="getRegBill" parameterType="java.lang.String" resultType="bai.entity.RegBill">
+        SELECT * from regbill where regbillid = #{rbid}
+    </select>
+
+    <insert id="saveStorage" parameterType="bai.entity.Storage">
+        INSERT INTO storage(sid,mid,amount) VALUES(#{sid},#{mid},#{amount})
+    </insert>
+
+    <select id="getStorage" parameterType="java.lang.String" resultType="bai.entity.Storage">
+        SELECT * FROM storage WHERE mid = #{mid}
+    </select>
+
+    <update id="updateStorage" parameterType="bai.entity.Storage">
+        UPDATE storage SET amount = #{amount} WHERE sid = #{sid}
+    </update>
+
+    <update id="updateMedicine" parameterType="bai.entity.Medicine">
+        UPDATE medicine SET
+        name=#{name},function=#{function},specification=#{specification},ingredient=#{ingredient},
+        price=#{price},details=#{details},type=#{type}
+        WHERE mid = #{mid}
+    </update>
+
+    <select id="getRightTask" parameterType="java.lang.String" resultType="bai.entity.RegRight">
+        SELECT * FROM regright WHERE handler = #{infoid} AND state = "B"
+    </select>
+
+    <update id="handleRegRight" parameterType="java.lang.String">
+        UPDATE regright SET state = #{param2} WHERE rrid = #{param1}
+    </update>
+
+    <update id="addRightReason" parameterType="java.lang.String">
+        UPDATE regright SET extra = #{param2} WHERE rrid = #{param1}
+    </update>
+
+    <select id="getRegRight" parameterType="java.lang.String" resultType="bai.entity.RegRight">
+        SELECT * FROM regright WHERE rrid = #{rrid}
+    </select>
+
+    <update id="giveRight" parameterType="bai.entity.UserInfo">
+        UPDATE userinfo SET roleid = #{roleid} WHERE infoid = #{infoid}
+    </update>
+
+    <select id="getProducers" resultType="bai.entity.Producer">
+        SELECT * FROM producer
+    </select>
+
+    <select id="getMedicine" parameterType="java.lang.String" resultType="bai.entity.Medicine">
+        SELECT * FROM medicine WHERE ${param1} LIKE #{param2}
+    </select>
+
+    <select id="getMedicineList" resultType="bai.entity.Medicine">
+        SELECT * FROM medicine
+    </select>
+
+    <!--获取挂号单中的药品-->
+    <select id="getMdPack" parameterType="java.lang.String" resultType="bai.entity.Medicine">
+        SELECT m.* FROM regbill_ep r INNER JOIN medicine m
+        on m.mid = r.extra
+        AND rbid = #{rbid};
+    </select>
+
+    <!--取药单列表-->
+    <select id="getMdRegbill" resultType="bai.entity.RegBill">
+        SELECT * FROM regbill WHERE state = 'G'
+    </select>
+    
+    <update id="buyMd" parameterType="java.lang.String">
+        UPDATE storage SET amount =#{param2} WHERE mid = #{param1}
+    </update>
+
+    <insert id="saveDrInfo" parameterType="bai.entity.Doctor">
+        INSERT INTO drinfo(id, drinfoid, jobage, hiredate) values(#{id},#{drinfoid},0,#{hiredate});
+    </insert>
+
+</mapper>

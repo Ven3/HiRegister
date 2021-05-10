@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注 册</title>
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <!--external css-->
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/style-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<!-- **********************************************************************************************************************************************************
+MAIN CONTENT
+*********************************************************************************************************************************************************** -->
+
+<div id="login-page">
+    <div class="container">
+
+        <form class="form-login" action="/cregister" method="post">
+            <h2 class="form-login-heading" style="background-color:#6495ed"> 注 册 </h2>
+            <div class="login-wrap">
+                <input name="loginid" id="loginid" type="email" class="form-control" placeholder="邮箱" autofocus required>
+                <span class="text-danger loginid-span"></span>
+                <br>
+                <input name="password" id="password" type="password" class="form-control" placeholder="密码" required>
+                <span class="text-danger"></span>
+                <br>
+                <input name="cpassword" id="cpassword" type="password" class="form-control" placeholder="确认密码" required>
+                <span class="text-danger"></span>
+                <br>
+                <button class="btn btn-theme btn-block" type="submit" style="background-color:#6495ed"><i class="fa fa-address-card"></i> 注 册 </button>
+                <hr>
+                <div class="registration">
+                    已有帐号?<a href="/login.html"> 前往登录 </a>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="assets/js/jquery.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!--BACKSTRETCH-->
+<!-- You can use an image of whatever size. This script will stretch to fit in any screen size.-->
+<!--<script type="text/javascript" src="assets/js/jquery.backstretch.min.js"></script>-->
+<script>
+    // $.backstretch("assets/img/login-bg.jpg", {speed: 500});
+    $(function () {
+       $("#loginid").blur(function () {
+           $.get("/checkid",{loginid: $("#loginid").val()},function(data){
+               $(".loginid-span").text(data.message);
+           });
+       });
+    });
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>药品采购</title>
+
+    <link rel="shortcut icon" href="assets/img/logo2x.png"/>
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet"/>
+    <!--external css-->
+    <link rel="stylesheet" type="text/css" href="assets/font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/zabuto_calendar.css">
+    <link rel="stylesheet" type="text/css" href="assets/js/gritter/css/jquery.gritter.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/lineicons/style.css">
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/style-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<section id="container">
+
+    <div th:replace="tools :: header"></div>
+
+    <div th:replace="tools :: sidebar "></div>
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper site-min-height">
+            <!--<div class="row col-lg-12">-->
+            <div class="form-panel">
+                <div class="btn-group">
+                    <button class="btn " onclick="window.history.back()"><i class="fa fa-angle-left"></i> 返回
+                    </button>
+                    <button class="btn " onclick="javascript:location.reload();"><i class="fa fa-refresh"></i> 刷新
+                    </button>
+                    <button data-target="#mdbag" data-toggle="modal" class="btn btn-default" type="button">购药单</button>
+                </div>
+            </div>
+            <!--</div>-->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-panel">
+                        <h3 class="text-center"><i class="fa fa-angle-right"></i> 采购药品 <i class="fa fa-angle-left"></i>
+                        </h3>
+                        <hr>
+
+                        <div class=" form-inline">
+                            <label class="h3">选择供应商 : </label>
+                            <select class="form-control" id="pdlist">
+
+                            </select>
+                        </div>
+
+                        <div class="">
+                            <table class="table table-striped table-advance table-hover">
+                                <thead>
+                                <th style="width:150px;max-width: 200px;">药品名</th>
+                                <th>药品编号</th>
+                                <th>类别</th>
+                                <th>药效</th>
+                                <th>单价</th>
+                                <th style="width: 60px">操作</th>
+                                </thead>
+                                <tbody id="mdlist">
+
+                                </tbody>
+                                <tfoot>
+
+                                </tfoot>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </section>
+        <! --/wrapper -->
+
+    </section>
+
+    <!--main content end-->
+
+    <!--**********************************************************************************************
+    Footer
+    **********************************************************************************************-->
+
+    <!--footer start-->
+    <footer class="site-footer">
+        <div class="text-center">
+            Copyright © 2018 David Bai
+            <a href="#main-content" class="go-top">
+                <i class="fa fa-angle-up"></i>
+            </a>
+        </div>
+    </footer>
+    <!--footer end-->
+</section>
+
+<!-- Modal -->
+<div id="mdbag" aria-hidden="true" role="dialog" class="modal fade" hidden>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                <h4 class="modal-title"> 购物单 </h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped table-advance table-hover">
+                    <thead>
+                    <th>药名</th>
+                    <th>药品编号</th>
+                    <th>单价</th>
+                    <th>购买数量</th>
+                    <th>操作</th>
+                    </thead>
+                    <tbody class="chartlist">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-danger" type="button">取消</button>
+                <button class="btn btn-success" type="button" onclick="funBuy()">结算</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="assets/js/jquery.js"></script>
+<script src="assets/js/jquery-1.8.3.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script class="include" type="text/javascript" src="assets/js/jquery.dcjqaccordion.2.7.js"></script>
+<script src="assets/js/jquery.scrollTo.min.js"></script>
+<script src="assets/js/jquery.nicescroll.js" type="text/javascript"></script>
+<script src="assets/js/jquery.sparkline.js"></script>
+
+<!--common script for all pages-->
+<script src="assets/js/common-scripts.js"></script>
+
+<script>
+
+    $.post("/listproducer", function (data) {
+        $("#pdlist").text("");
+        $("#pdlist").html("<option>---请选择供应商---</option>");
+        $.each(data.data, function (index, pd) {
+            var item = "<option value='" + pd.pdid + "'>" + pd.pdname + "</option>"
+            $("#pdlist").append(item);
+        })
+
+    });
+
+    $("#pdlist").change(function () {
+        $.post("/getmdlist", {pdid: $("#pdlist").val()}, function (data) {
+            $("#mdlist").text("");
+            $.each(data.data, function (index, mdc) {
+                var row = "<tr>" +
+                    "<td>" + mdc.name + "</td>" +
+                    "<td><a href='/viewmedicine?mid=" + mdc.mid + "'>" + mdc.mid + "</a></td>" +
+                    "<td>" + mdc.type + "</td>" +
+                    "<td>" + mdc.function + "</td>" +
+                    "<td>" + mdc.price + "</td>" +
+                    "<td><button class='btn btn-default btn-sm' onclick='funAdd(this)'>加购</button> </td>" +
+                    "</tr>";
+                $("#mdlist").append(row);
+            })
+        });
+    });
+
+
+    function funAdd(btn) {
+        var amount = prompt("请输入数量");
+        if (amount == null) {
+            return;
+        }
+        if (isNaN(amount)) {
+            alert("请输入数字");
+        } else {
+            var mid = $(btn).parent().parent().find("a");
+
+            $.post("/mdinfo", {mid: mid.text()}, function (mdc) {
+                var row = "<tr>" +
+                    "<td>" + mdc.name + "</td>" +
+                    "<td>" + mdc.mid + "</td>" +
+                    "<td>" + mdc.price + "</td>" +
+                    "<td>" + amount + "</td>" +
+                    "<td><button class='btn btn-sm btn-danger' onclick='funRemove(this)'>移除</button></td>" +
+                    "</tr>";
+                $(".chartlist").append(row);
+                alert("添加成功");
+
+
+            });
+        }
+    }
+
+    function funRemove(btn) {
+        var row = $(btn).parent().parent();
+        $(row).remove();
+    };
+    
+    function funBuy() {
+        if(confirm("确认提交订单吗？")){
+            alert("提交成功");
+            location.reload();
+        }
+    }
+</script>
+
+</body>
+</html>

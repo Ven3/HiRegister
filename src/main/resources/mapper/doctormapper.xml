@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="bai.dao.DoctorDao">
+
+    <!--查看医生任务-->
+    <select id="getOpt" parameterType="java.lang.String" resultType="bai.entity.RegBill">
+        SELECT * from regbill where drid = #{drid}
+        AND state in ('B','C','D','E','F','G')
+        ORDER BY state ASC,aptdate DESC,createtime ASC,time asc
+    </select>
+
+    <select id="getStorage" resultType="bai.entity.Storage">
+        SELECT * FROM storage
+    </select>
+
+    <select id="getItems" parameterType="java.lang.String" resultType="bai.entity.Storage">
+        SELECT * from storageinfo WHERE ${param1} like #{param2}
+    </select>
+
+    <select id="getMedicine" parameterType="java.lang.String" resultType="bai.entity.Medicine">
+        select m.* FROM storage s LEFT JOIN medicine m
+        ON s.mid = m.mid
+        where m.${param1} like #{param2}
+    </select>
+
+    <select id="getProducer" parameterType="java.lang.String" resultType="bai.entity.Producer">
+        SELECT * FROM producer where pdid = #{pdid}
+    </select>
+
+    <!--购买药品，更新库存-->
+    <update id="updateStorage" parameterType="bai.entity.Storage">
+        UPDATE storage SET amount = #{amount} WHERE mid = #{mid}
+    </update>
+
+    <!--新增诊断记录-->
+    <insert id="saveRbInfo" parameterType="bai.entity.RegBillInfo">
+        INSERT INTO regbill_info(rbinfoid, content, rbid, createtime) VALUES(#{rbinfoid}, #{content}, #{rbid}, #{createtime})
+    </insert>
+
+    <!--删除诊断记录-->
+    <delete id="delRbInfo" parameterType="java.lang.String">
+        DELETE FROM regbill_info where rbinfoid = #{rbinfoid}
+    </delete>
+
+    <delete id="delRbEp" parameterType="java.lang.String">
+        DELETE FROM regbill_ep WHERE epid = #{epid}
+    </delete>
+
+    <update id="udDrInfo" parameterType="bai.entity.Doctor">
+        UPDATE drinfo SET deptid = #{deptid}
+        WHERE drinfoid = #{drinfoid}
+    </update>
+
+</mapper>

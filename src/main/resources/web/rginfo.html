@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>查看挂号单</title>
+
+    <link rel="shortcut icon" href="assets/img/logo2x.png"/>
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet"/>
+    <!--external css-->
+    <link rel="stylesheet" type="text/css" href="assets/font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/zabuto_calendar.css">
+    <link rel="stylesheet" type="text/css" href="assets/js/gritter/css/jquery.gritter.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/lineicons/style.css">
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/style-responsive.css" rel="stylesheet">
+
+    <script src="assets/js/chart-master/Chart.js"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<section id="container">
+    <div th:replace="tools :: header"></div>
+
+    <div th:replace="tools :: sidebar "></div>
+
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper site-min-height">
+            <div class="form-panel">
+                <div class="btn-group">
+                    <button class="btn" onclick="window.history.back()"><i class="fa fa-angle-left"></i> 返 回
+                    </button>
+                    <button class="btn " onclick="javascript:location.reload();"><i class="fa fa-refresh"></i> 刷新
+                    </button>
+                    <button class="btn btn-default " onclick="finishRb()"
+                            th:if="${session.loginuser.infoid } == ${regbill.userinfo.infoid} and ${regbill.state} == 'E'">
+                        结 算
+                    </button>
+                    <button class="btn btn-default" onclick="funGetMdc()"
+                            th:if="${session.loginuser.infoid } == ${regbill.userinfo.infoid} and ${regbill.state} == 'F'">
+                        取药
+                    </button>
+                    <button class="btn btn-default" onclick="funPrint()" th:if="${regbill.state} > 'E'">打印费用</button>
+                    <button class="btn btn-default" onclick="funMeet()"
+                            th:if="${session.loginuser.infoid } == ${regbill.doctor.drinfoid} and ${regbill.state} == 'C'">
+                        会诊
+                    </button>
+                    <button class="btn btn-default" onclick="doneRb()"
+                            th:if="${session.loginuser.infoid} == ${regbill.doctor.drinfo.infoid} and ${regbill.state} == 'D'">
+                        完成诊断
+                    </button>
+                </div>
+            </div>
+            <div class="row mt form-panel">
+                <div class="col-md-12 centered">
+                    <h3><i class="fa fa-angle-right"></i> 挂号单详情 <i class="fa fa-angle-left"></i></h3>
+                </div>
+                <div class="col-md-12">
+
+                    <div class="col-md-6 mb">
+                        <!-- WHITE PANEL - TOP USER -->
+                        <div class="white-panel pn">
+                            <div class="white-header">
+                                <h5>患者</h5>
+                            </div>
+                            <p><img th:src="${regbill.ptinfo.picurl}" class="img-circle" width="80"></p>
+                            <p><b th:text="${regbill.ptinfo.realname}"></b></p>
+                            <div class="row col-xs-12">
+                                <div class="col-md-4 col-xs-4">
+                                    <p class="small mt">性别</p>
+                                    <p th:text="${regbill.ptinfo.gender}"></p>
+                                </div>
+                                <div class="col-md-4 col-xs-4">
+                                    <p class="small mt">年龄</p>
+                                    <p th:text="${regbill.ptinfo.age}"></p>
+                                </div>
+                                <div class="col-md-4 col-xs-4">
+                                    <p class="small mt">生日</p>
+                                    <p th:text="${regbill.ptinfo.birthday}"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb">
+                        <!-- WHITE PANEL - TOP USER -->
+                        <div class="white-panel pn">
+                            <div class="white-header">
+                                <h5>医生</h5>
+                            </div>
+                            <p><img th:src="${regbill.doctor.drinfo.picurl}" class="img-circle" width="80"></p>
+                            <p><b th:text="${regbill.doctor.drinfo.realname}"></b></p>
+                            <div class="row col-xs-12">
+                                <div class="col-md-6 col-xs-6">
+                                    <p class="small mt">科室</p>
+                                    <p th:text="${regbill.doctor.dept.dname}"></p>
+                                </div>
+                                <div class="col-md-6 col-xs-6">
+                                    <p class="small mt">医龄</p>
+                                    <p th:text="${regbill.doctor.jobage}"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel col-md-12">
+                        <h4 class="text-primary"><i class="fa fa-angle-right"></i>挂号单信息</h4>
+                        <div class="form-group">
+                            <div class="row form-inline left">
+                                <div class="col-md-6">
+                                    <label class="h4">单号 :</label>
+                                    <label class="h4 rbidlb" th:text="${regbill.regbillid}"></label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="h4">总费用（元） :</label>
+                                    <label class="h4" th:text="${regbill.total}"></label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="h4">挂号科室 :</label>
+                                    <label class="h4" th:text="${regbill.doctor.dept.dname}"></label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="h4">挂号日期 :</label>
+                                    <label class="h4" th:text="${regbill.createtime}"></label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="h4">预约日期 :</label>
+                                    <label class="h4" th:text="${regbill.aptdate}"></label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="h4">预约时间 :</label>
+                                    <!--<label th:text="${regbill.time}"></label>-->
+                                    <select th:value="${regbill.time}" class="form-control" disabled>
+                                        <option value="1">8:00-10:00</option>
+                                        <option value="2">10:00-11:30</option>
+                                        <option value="3">13:00-15:00</option>
+                                        <option value="4">15:00-17:00</option>
+                                        <option value="5">18:30-19:30</option>
+                                    </select>
+                                </div>
+                                <!--</div>-->
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="panel col-md-12">
+                        <h4 class="text-primary"><i class="fa fa-angle-right"></i>诊断记录</h4>
+                        <div class="row col-md-12 ">
+                            <div class="row col-md-12">
+                                <button class="btn btn-success" data-toggle="modal" data-target="#newContent"
+                                        th:if="${session.loginuser.infoid } == ${regbill.doctor.drinfoid}">新增记录
+                                </button>
+                                <hr/>
+                            </div>
+                            <div class="form-group" id="infobox">
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="panel col-md-12">
+
+                        <h4 class="text-primary"><i class="fa fa-angle-right"></i>费用详情</h4>
+                        <div class="row col-md-12">
+
+                            <button class="btn btn-success" data-toggle="modal" data-target="#newEp"
+                                    th:if="${session.loginuser.infoid } == ${regbill.doctor.drinfoid}">新增项目
+                            </button>
+
+                            <hr>
+                        </div>
+                        <table class="table table-striped table-advance table-hover">
+                            <thead class="table-bordered">
+                            <tr class="bg-success">
+                                <th><i class="fa fa-table"></i> 费用项目</th>
+                                <th><i class="fa fa-calendar"></i> 产生时间</th>
+                                <th><i class="fa fa-rmb"></i> 费用金额（元）</th>
+                                <th><i class="fa fa-pencil"></i> 备注</th>
+                                <th><i class="fa fa-cog"></i> 操作</th>
+
+                            </tr>
+                            </thead>
+
+                            <tbody id="rbepbox">
+
+                            </tbody>
+                            <tfoot>
+
+                            </tfoot>
+
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+        <! --/wrapper -->
+
+    </section>
+
+    <!--main content end-->
+
+    <!--**********************************************************************************************
+    Footer
+    **********************************************************************************************-->
+
+    <!--footer start-->
+    <footer class="site-footer">
+        <div class="text-center">
+            Copyright © 2018 David Bai
+            <a href="#main-content" class="go-top">
+                <i class="fa fa-angle-up"></i>
+            </a>
+        </div>
+    </footer>
+    <!--footer end-->
+</section>
+
+<!--新增诊断记录-->
+<!-- Modal -->
+<div id="newContent" aria-hidden="true" role="dialog" class="modal fade" hidden>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                <h4 class="modal-title">添加诊断记录</h4>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control" rows="10" id="content"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-danger" type="button">取消</button>
+                <button class="btn btn-success" type="button" onclick="saveContent()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal -->
+
+<!--新增费用-->
+<div id="newEp" aria-hidden="true" role="dialog" class="modal fade" hidden>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">新增费用项目</h4>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <select id="eptype" class="form-control">
+                        <option value="1">普通费用</option>
+                        <option value="2">药品费用</option>
+                    </select>
+                </div>
+                <div class="rbepname">
+                    <h4>费用名</h4>
+                    <input type="text" class="form-control" id="rbepname">
+                    <h4>价格</h4>
+                    <input type="number" class="form-control" id="rbepprice">
+                </div>
+                <div class="rbmdid" hidden>
+                    <h4>药品名</h4>
+                    <input type="text" id="mdfindbar" class="form-control" placeholder="输入药名进行筛选">
+                    <select id="rbmdname" class="form-control">
+                    </select>
+                </div>
+                <div class="rbepname">
+                    <h4>备注</h4>
+                    <textarea class="form-control" rows="3" id="rbepextra"></textarea>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-danger" type="button">取消</button>
+                <button class="btn btn-success" type="button" onclick="saveEp()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="assets/js/jquery.js"></script>
+<script src="assets/js/jquery-1.8.3.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script class="include" type="text/javascript" src="assets/js/jquery.dcjqaccordion.2.7.js"></script>
+<script src="assets/js/jquery.scrollTo.min.js"></script>
+<script src="assets/js/jquery.nicescroll.js" type="text/javascript"></script>
+<script src="assets/js/jquery.sparkline.js"></script>
+
+<!--common script for all pages-->
+<script src="assets/js/common-scripts.js"></script>
+
+<script>
+    initContent();
+    initRbEp();
+    fillMdOpt("");
+
+    $("#eptype").change(function () {
+        if ($("#eptype").val() == 1) {
+            $(".rbepname").show();
+            $(".rbmdid").hide();
+        }
+        if ($("#eptype").val() == 2) {
+            $(".rbepname").hide();
+            $(".rbmdid").show();
+        }
+
+    });
+
+    function saveContent() {
+
+        var rbid = $(".rbidlb").text();
+        var rbcontent = $("#content").val();
+        $.post("/saveContent", {rbid: rbid, rbcontent: rbcontent}, function (data) {
+            alert(data.message);
+            $("#newContent").modal("toggle");
+            initContent();
+        });
+        $("#content").val("");
+
+    }
+
+    function deleRbInfo(rbinfoid) {
+        if (confirm("确认要删除?")) {
+            $.post("/deleteRbInfo", {rbinfoid: rbinfoid}, function (data) {
+                if (data.state == 100) {
+                    alert("删除成功");
+                } else {
+                    alert(data.message);
+                }
+                initContent();
+            });
+        }
+
+    }
+
+    function initContent() {
+        var rbid = $(".rbidlb").text();
+        $.post("/getRbContent", {rbid: rbid}, function (data) {
+            $("#infobox").text("");
+            var infos = data.data;
+            $.each(infos, function (index, info) {
+                var row = "<div class=\"row col-lg-12\">\n" +
+                    "<div class='h4'>\n" +
+                    "<label>创建时间:</label> <label>" + info.createtime + "</label>\n" +
+                    "<button class='btn btn-danger pull-right' onclick='deleRbInfo(\"" + info.rbinfoid + "\")'>删除记录</button>\n" +
+                    "</div>\n" +
+                    "<textarea readonly class='form-control col-md-12 h4' rows='6'>" + info.content + "</textarea>\n" +
+                    "</div>";
+                $("#infobox").append(row);
+            });
+        });
+    }
+
+    function initRbEp() {
+        var rbid = $(".rbidlb").text();
+        $("#rbepbox").text("");
+        $.post("/getrbeps", {rbid: rbid}, function (data) {
+            var rbeps = data.data;
+            $.each(rbeps, function (indx, rbep) {
+                var row = "<tr>" +
+                    "<td>" + rbep.epname + "</td>" +
+                    "<td>" + rbep.createtime + "</td>" +
+                    "<td>" + rbep.epmoney + "</td>" +
+                    "<td>" + rbep.extra + "</td>" +
+                    "<td>" +
+                    "<button class='btn btn-sm btn-danger' onclick='delRbEp(\"" + rbep.epid + "\")'>删除</button>" +
+                    "</td>" +
+                    "</tr>"
+                $("#rbepbox").append(row);
+            });
+        });
+    }
+
+    function fillMdOpt(mdname) {
+        $("#rbmdname").text("");
+        $.get("/findmedicine", {type: "name", value: mdname}, function (data) {
+            var mds = data.data;
+            $.each(mds, function (index, md) {
+                var opt = "<option value='" + md.mid + "'>" + md.medicine.name + "</option>";
+                $("#rbmdname").append(opt);
+            });
+        });
+    }
+
+    $("#mdfindbar").change(function () {
+        var mdname = $("#mdfindbar").val();
+        fillMdOpt(mdname);
+    });
+
+
+    function saveEp() {
+        var rbid = $(".rbidlb").text();
+        var extra = $("#rbepextra").val();
+        if ($("#eptype").val() == 1) {
+            $.get("/saverbep", {
+                type: 1,
+                name: $("#rbepname").val(),
+                price: $("#rbepprice").val(),
+                extra: extra,
+                rbid: rbid
+            }, function (data) {
+                alert(data.message);
+                $("#newEp").modal("toggle");
+                $("#rbepextra").val("");
+                $("#rbepname").val("");
+                $("#rbepprice").val("")
+                // initRbEp();
+            });
+        }
+        if ($("#eptype").val() == 2) {
+            $.get("/saverbep", {type: 2, name: $("#rbmdname").val(), extra: extra, rbid: rbid}, function (data) {
+                alert(data.message);
+                $("#newEp").modal("toggle");
+                // initRbEp();
+            });
+        }
+        location.reload();
+    }
+
+    function delRbEp(epid) {
+        if (confirm("确认要删除?")) {
+            $.post("/deleteep", {epid: epid}, function (data) {
+                alert(data.message);
+                // initRbEp();
+                location.reload();
+            });
+        }
+    }
+
+    function finishRb() {
+        var rbid = $(".rbidlb").text();
+        location.href = "/settlement?rbid=" + rbid;
+    }
+
+    function funPrint() {
+        var rbid = $(".rbidlb").text();
+        location.href = "/printep?rbid=" + rbid;
+    }
+
+    function doneRb() {
+
+        if (confirm("治疗是否完成？")) {
+            var rbid = $(".rbidlb").text();
+            $.post("/donerb", {rbid: rbid}, function (data) {
+                alert(data.message);
+            });
+        }
+    }
+
+    function funMeet() {
+        var rbid = $(".rbidlb").text();
+        if (confirm("是否进行诊断？")) {
+            $.post("/getmeet", {rbid: rbid}, function (data) {
+                alert(data.message);
+            });
+        }
+    }
+
+    function funGetMdc() {
+        var rbid = $(".rbidlb").text();
+        if (confirm("是否取药")) {
+            $.post("/getmdc", {rbid: rbid}, function (data) {
+                alert(data.message);
+                location.href = "/records"
+            });
+        }
+    }
+
+</script>
+
+</body>
+</html>

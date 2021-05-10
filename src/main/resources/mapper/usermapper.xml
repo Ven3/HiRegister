@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="bai.dao.UserDao">
+
+    <resultMap type="bai.entity.User" id="UserResult">
+        <result property="id" column="id"/>
+        <result property="loginid" column="loginid"/>
+        <result property="password" column="password"/>
+        <result property="state" column="state"/>
+        <result property="infoid" column="infoid"/>
+    </resultMap>
+
+    <select id="getUserInfo" resultType="bai.entity.UserInfo" parameterType="java.lang.String">
+        SELECT * from userinfo where infoid = #{infoid}
+    </select>
+    <!--重置用户密码-->
+    <select id="queryUserInfo" parameterType="java.lang.String" resultType="bai.entity.UserInfo">
+        SELECT * FROM userinfo where email = #{param1} AND username = #{param2} AND realname = #{param3}
+    </select>
+    <update id="changePassword" parameterType="java.lang.String">
+        update user SET password = #{param1} where infoid = #{param2}
+    </update>
+
+    <!--User-Login-->
+    <select id="login" resultType="bai.entity.User" parameterType="bai.entity.User">
+      SELECT * from user where loginid=#{loginid} and password=#{password}
+    </select>
+
+    <select id="checkId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(*) from user where loginid = #{loginid}
+    </select>
+
+    <!--用户注册-->
+    <insert id="regUser" parameterType="bai.entity.User">
+        insert into user(id,loginid,password,state) values(#{id},#{loginid},#{password},#{state})
+    </insert>
+
+    <!--添加用户信息-->
+    <insert id="addUserInfo" parameterType="bai.entity.UserInfo">
+        INSERT into userinfo(id,infoid,username,realname,idtype,idcard,gender,age,birthday,email,phone,picurl,regtime,updatetime,roleid)
+        values(#{id},#{infoid},#{username},#{realname},#{idtype},#{idcard},#{gender},#{age},#{birthday},#{email},#{phone},#{picurl},#{regtime},now(),1)
+    </insert>
+    <!--新增患者信息-->
+    <insert id="addPtUser" parameterType="bai.entity.UserInfo">
+        INSERT into userinfo(id,infoid,username,realname,gender,age,birthday,picurl,regtime,updatetime)
+        values(#{id},#{infoid},#{username},#{realname},#{gender},#{age},#{birthday},#{picurl},#{regtime},now())
+    </insert>
+
+    <!--更新用户信息-->
+    <update id="updateUserInfo" parameterType="bai.entity.UserInfo">
+        UPDATE userinfo set username=#{username},realname=#{realname},idtype=#{idtype},idcard=#{idcard},phone=#{phone},age=#{age}
+        where id=#{id}
+    </update>
+    <!--更新User-->
+    <update id="updateUser" parameterType="bai.entity.User">
+      UPDATE user set infoid = #{infoid},state=#{state},loginid=#{loginid},password=#{password}
+      where id = #{id}
+    </update>
+
+    <!--获取科室列表-->
+    <select id="getDeptList" resultType="bai.entity.Dept" parameterType="java.lang.String">
+        SELECT * from dept where pareid=#{deptid};
+    </select>
+
+    <select id="getDept" resultType="bai.entity.Dept" parameterType="java.lang.String">
+        SELECT * FROM dept WHERE  deptid = #{deptid}
+    </select>
+
+    <!--查询医生列表-->
+    <select id="listDoctors" resultType="bai.entity.Doctor">
+        SELECT * from drinfo where deptid like #{deptid}
+    </select>
+
+    <!--添加费用项-->
+    <insert id="addExpence" parameterType="bai.entity.RegBillEp">
+        INSERT into regbill_ep(epid,rbid,createtime,epname,epmoney,extra)
+        VALUES(#{epid},#{rbid},now(),#{epname},#{epmoney},#{extra})
+    </insert>
+
+    <!--新增挂号单-->
+    <insert id="addAppointment" parameterType="bai.entity.RegBill">
+        INSERT into regbill(rbid,regbillid,createtime,aptdate,time,userid,drid,deptid,state,total,ptinfoid)
+        VALUES(#{rbid},#{regbillid},now(),#{aptdate},#{time},#{userid},#{drid},#{deptid},#{state},#{total},#{ptinfoid})
+    </insert>
+
+    <!--查询挂号记录-->
+    <select id="getRecords" resultType="bai.entity.RegBill" parameterType="java.lang.String">
+        SELECT * from regbill where userid = #{infoid}
+        ORDER BY state ASC,createtime DESC
+    </select>
+    
+    <select id="getRegCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT count(*) FROM regbill WHERE userid = #{infoid}
+    </select>
+
+    <select id="getAptCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(*) FROM regbill WHERE drid = #{drid}
+        AND state in('B','C','D')
+    </select>
+    <!--根据drid查询医生信息-->
+    <select id="getDrinfo" parameterType="java.lang.String" resultType="bai.entity.Doctor">
+        SELECT * from drinfo WHERE id = #{drid}
+    </select>
+
+    <!--根据infoid查询医生信息-->
+    <select id="getDrUserinfo" parameterType="java.lang.String" resultType="bai.entity.Doctor">
+        SELECT * FROM drinfo where drinfoid = #{infoid}
+    </select>
+
+    <!--删除挂号单-->
+    <delete id="delRegBill" parameterType="java.lang.String">
+        DELETE from regbill where regbillid = #{rbid};
+        DELETE from regbill_ep where rbid = #{rbid};
+        DELETE from regbill_info where rbid = #{rbid};
+    </delete>
+
+    <!--查询挂号单-->
+    <select id="getRegBill" parameterType="java.lang.String" resultType="bai.entity.RegBill">
+        SELECT * from regbill WHERE regbillid = #{rbid}
+    </select>
+
+    <!--查询费用列表-->
+    <select id="getregBillEps" parameterType="java.lang.String" resultType="bai.entity.RegBillEp">
+        SELECT * from regbill_ep where rbid = #{regbillid}
+    </select>
+
+    <!--查询诊断记录-->
+    <select id="getRegBillInfos" parameterType="java.lang.String" resultType="bai.entity.RegBillInfo">
+        SELECT * from regbill_info where rbid = #{regbillid}
+    </select>
+
+    <!--更改挂号单状态-->
+    <update id="changeState" parameterType="java.lang.String">
+        UPDATE regbill SET state = #{param2} where regbillid = #{param1}
+    </update>
+
+    <!--添加缘由-->
+    <update id="addReason" parameterType="java.lang.String">
+        UPDATE regbill SET extra = #{param2} where regbillid = #{param1}
+    </update>
+
+    <!--更新总费用-->
+    <update id="udTotal" parameterType="java.lang.String">
+       UPDATE regbill SET total =(
+       SELECT sum(ep.epmoney) FROM regbill_ep ep where ep.rbid = #{rbid}
+       ) WHERE regbillid = #{rbid}
+    </update>
+
+    <!--获取管理员-->
+    <select id="getAdmins" resultType="bai.entity.UserInfo">
+        SELECT * FROM userinfo WHERE roleid = 4 OR roleid = 5
+    </select>
+    <!--获取超级管理员-->
+    <select id="getSAdmins" resultType="bai.entity.UserInfo">
+        SELECT * FROM userinfo WHERE roleid = 6
+    </select>
+
+    <!--权限申请-->
+    <insert id="regRight" parameterType="bai.entity.RegRight">
+        INSERT into regright(rrid, userid, fromrole, torole, handler, state)
+        VALUES(#{rrid}, #{userid}, #{fromrole}, #{torole}, #{handler}, #{state});
+    </insert>
+
+    <!--获取权限申请列表-->
+    <select id="getRegRights" parameterType="java.lang.String" resultType="bai.entity.RegRight">
+        SELECT * FROM regright WHERE userid = #{infoid}
+    </select>
+
+    <!--挂号单中药品列表-->
+    <select id="getMdc" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(*) FROM regbill_ep r INNER JOIN medicine m
+        on m.mid = r.extra
+        AND rbid = #{rbid};
+    </select>
+    
+    <select id="getRbMdList" parameterType="java.lang.String" resultType="bai.entity.Medicine">
+        SELECT m.* FROM regbill_ep r INNER JOIN medicine m
+        on m.mid = r.extra
+        where rbid = #{rbid}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>欢迎</title>
+
+    <link rel="shortcut icon" href="assets/img/logo2x.png"/>
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet"/>
+    <!--external css-->
+    <link rel="stylesheet" type="text/css" href="assets/font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/zabuto_calendar.css">
+    <link rel="stylesheet" type="text/css" href="assets/lineicons/style.css">
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/style-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<section id="container">
+    <div th:replace="tools :: header"></div>
+
+    <div th:replace="tools :: sidebar "></div>
+
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper site-min-height">
+            <h3><i class="fa fa-angle-right"></i> 您好！！欢迎！！</h3>
+            <div class="row mt">
+
+
+                <div class="col-lg-12 col-md-12 col-sm-12 mb">
+                    <div class="weather-2 pn">
+                        <div class="weather-2-header">
+                            <div class="row">
+                                <div class="col-sm-6 col-xs-6">
+                                    <p>INFO</p>
+                                </div>
+                                <div class="col-sm-6 col-xs-6 goright">
+                                    <p class="datetime"></p>
+                                </div>
+                            </div>
+                        </div><!-- /weather-2 header -->
+
+                        <div class="row centered">
+                            <a href="/profile">
+                                <img th:src="${session.loginuser.picurl}" class="img-circle" width="120">
+                            </a>
+                        </div>
+                        <div class="row data centered">
+
+                            <h3 th:text="${session.loginuser.username}"></h3>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-sm-4 mb">
+                    <a href="/appointment">
+                        <div class="darkblue-panel pn">
+                            <div class="darkblue-header">
+                                <h3></h3>
+                            </div>
+                            <h1 class="mt"><i class="fa fa-user-md fa-3x"></i></h1>
+                            <footer class="centered">
+                                <h2>前往挂号</h2>
+                            </footer>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-sm-4 mb">
+                    <a href="/records">
+                        <div class="darkblue-panel pn">
+
+                            <div class="darkblue-header">
+                                <h1 class="pull-left h1" th:text="${session.regcount}"></h1>
+                            </div>
+                            <h1 class="mt"><i class="fa fa-list-alt fa-3x"></i></h1>
+                            <footer class="centered">
+                                <h2>挂号记录</h2>
+                            </footer>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-sm-4 mb" th:if="${session.loginuser.role.root} == false ">
+                    <a href="/authority">
+                        <div class="darkblue-panel pn">
+                            <div class="darkblue-header">
+                                <h3></h3>
+                            </div>
+                            <h1 class="mt"><i class="fa fa-key fa-3x"></i></h1>
+                            <footer class="centered">
+                                <h2>权限申请</h2>
+                            </footer>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-sm-4 mb" th:if="${session.loginuser.role.doctor} == true ">
+                    <a href="/clinic">
+                        <div class="darkblue-panel pn">
+                            <div class="darkblue-header">
+                                <h1 class="pull-left h1" th:text="${session.aptcount}"></h1>
+                            </div>
+                            <h1 class="mt"><i class="fa fa-stethoscope fa-3x"></i></h1>
+                            <footer class="centered">
+                                <h2>医疗类任务</h2>
+                            </footer>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6 col-sm-4 mb" th:if="${session.loginuser.role.admin} == true ">
+                    <a href="/tasks">
+                        <div class="darkblue-panel pn">
+                            <div class="darkblue-header">
+                                <h1 class="pull-left h1">0</h1>
+                            </div>
+                            <h1 class="mt"><i class="fa fa-list-ul fa-3x"></i></h1>
+                            <footer class="centered">
+                                <h2>权限类任务</h2>
+                            </footer>
+                        </div>
+                    </a>
+                </div>
+
+
+                <div class="col-md-6 col-sm-4 mb" th:if="${session.loginuser.role.admin} == true ">
+                    <a href="/medicine">
+                        <div class="darkblue-panel pn">
+                            <div class="darkblue-header">
+                                <h3></h3>
+                            </div>
+                            <h1 class="mt"><i class="fa fa-medkit fa-3x"></i></h1>
+                            <footer class="centered">
+                                <h2>药品管理</h2>
+                            </footer>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-sm-4 mb" th:if="${session.loginuser.role.root} ==true ">
+                    <a href="/users">
+                        <div class="darkblue-panel pn">
+                            <div class="darkblue-header">
+                                <h3></h3>
+                            </div>
+                            <h1 class="mt"><i class="fa fa-users fa-3x"></i></h1>
+                            <footer class="centered">
+                                <h2>用户管理</h2>
+                            </footer>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+        </section>
+        <! --/wrapper -->
+    </section>
+
+    <!--main content end-->
+
+    <!--**********************************************************************************************
+    Footer
+    **********************************************************************************************-->
+
+    <!--footer start-->
+    <footer class="site-footer">
+        <div class="text-center">
+            Copyright © 2018 David Bai
+            <a href="#main-content" class="go-top">
+                <i class="fa fa-angle-up"></i>
+            </a>
+        </div>
+    </footer>
+    <!--footer end-->
+</section>
+
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="assets/js/jquery.js"></script>
+<script src="assets/js/jquery-1.8.3.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script class="include" type="text/javascript" src="assets/js/jquery.dcjqaccordion.2.7.js"></script>
+<script src="assets/js/jquery.scrollTo.min.js"></script>
+<script src="assets/js/jquery.nicescroll.js" type="text/javascript"></script>
+<script src="assets/js/jquery.sparkline.js"></script>
+
+<!--common script for all pages-->
+<script src="assets/js/common-scripts.js"></script>
+
+<script>
+    $(function () {
+        setInterval("time()", 1000);
+    });
+
+    function time() {
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = today.getMonth() + 1;
+        var day = today.getDate();
+        $(".datetime").text(year + "-" +month + "-" +day + " ");
+        $(".datetime").append(today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + "  ");
+    }
+
+</script>
+</body>
+</html>

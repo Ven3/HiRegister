@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>个人信息</title>
+
+    <link rel="shortcut icon" href="assets/img/logo2x.png"/>
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet"/>
+    <!--external css-->
+    <link rel="stylesheet" type="text/css" href="assets/font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/zabuto_calendar.css">
+    <link rel="stylesheet" type="text/css" href="assets/js/gritter/css/jquery.gritter.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/lineicons/style.css">
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/style-responsive.css" rel="stylesheet">
+
+    <script src="assets/js/chart-master/Chart.js"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<section id="container">
+
+    <div th:replace="tools :: header"></div>
+
+    <div th:replace="tools :: sidebar "></div>
+
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper site-min-height">
+            <div class="row col-lg-12">
+                <div class="form-panel">
+                    <div class="btn-group">
+                        <button class="btn " onclick="window.history.back()"><i class="fa fa-angle-left"></i> 返回
+                        </button>
+                        <button class="btn " onclick="javascript:location.reload();"><i class="fa fa-refresh"></i> 刷新
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row col-lg-12">
+                <div class="">
+                    <div class="form-panel">
+                        <h3 class="centered"><i class="fa fa-angle-right"></i> 个人信息 <i class="fa fa-angle-right"></i>
+                        </h3>
+                        <hr>
+                        <form action="/infoupdate" id="info_form" class="form-horizontal style-form" method="post">
+                            <div class="mt">
+                                <button class="btn btn-primary btn_edit" type="button"><b class="fa fa-edit"></b> 编 辑
+                                </button>
+                                <button class="btn btn-success btn_save" type="button" data-toggle="modal"
+                                        data-target="#infobox" disabled="true"><b class="fa fa-save"></b> 保 存
+                                </button>
+                                <button class="btn btn-danger btn_reset" type="reset" disabled="true"><b
+                                        class="fa fa-remove"></b> 重 置
+                                </button>
+                            </div>
+                            <hr/>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">用户名</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="username"
+                                           th:value="${session.loginuser.username}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">真实姓名</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="realname"
+                                           th:value="${session.loginuser.realname}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">身份证号</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="idcard"
+                                           th:value="${session.loginuser.idcard}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">电子邮箱</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="email"
+                                           th:value="${session.loginuser.email}" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">手机号</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="phone"
+                                           th:value="${session.loginuser.phone}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 col-sm-2 control-label">年龄</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="age"
+                                           th:value="${session.loginuser.age}">
+                                </div>
+                            </div>
+                            <input type="text" hidden name="ctype" value="info">
+
+                        </form>
+                    </div>
+
+                </div><!-- col-lg-12-->
+            </div>
+
+            <div class="row col-lg-12">
+                <div class="form-panel">
+                    <h4><i class="fa fa-angle-right"></i> 修改密码 </h4>
+                    <form action="/infoupdate" id="pwd_form" class="form-horizontal style-form" method="post">
+                        <div class="mt">
+                            <button class="btn btn-success" type="button" onclick="savepwd()"><b class="fa fa-save"></b>
+                                保 存
+                            </button>
+                        </div>
+                        <hr/>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">原密码</label>
+                            <div class="col-sm-8">
+                                <input type="password" class="form-control" name="password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">新密码</label>
+                            <div class="col-sm-8">
+                                <input type="password" class="form-control" name="npassword">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">确认新密码</label>
+                            <div class="col-sm-8">
+                                <input type="password" class="form-control" name="cnpassword">
+                            </div>
+                        </div>
+                        <input type="text" hidden name="ctype" value="pwd">
+
+                    </form>
+                </div>
+            </div><!-- col-lg-12-->
+
+            <div class="row col-lg-12" th:if="${session.drinfo} != null">
+                <div class="form-panel col-lg-12">
+                    <h4><i class="fa fa-angle-right"></i> 医生信息 </h4>
+                        <button class="btn btn-success" type="button" onclick="udDrInfo()"><b class="fa fa-save"></b>
+                            保 存
+                        </button>
+                        <hr/>
+                        <div class="form-group form-inline col-lg-6">
+                            <label class="control-label col-lg-3 text-right h4"> 医 龄 </label>
+                            <input type="number" class="form-control" name="jobage" th:value="${session.drinfo.jobage}">
+                        </div>
+                        <div class="form-group form-inline col-lg-6">
+                            <label class="control-label col-lg-3 text-right h4"> 入职日期 </label>
+                            <input type="date" class="form-control" disabled
+                                   th:value="${session.drinfo.hiredate}">
+                        </div>
+                        <div class="form-group form-inline col-lg-6" align="left">
+                            <input type="text" th:value="${session.drinfo.deptid}" class="deptid" hidden="hidden">
+                            <label class="control-label col-lg-3 text-right h4"> 所属科室 </label>
+                            <select class="form-control" id="deptid">
+                                <option>---请更新科室信息---</option>
+                                <option value="1">内科</option>
+                                <option value="2">外科</option>
+                                <option value="3">妇产科</option>
+                                <option value="4">生殖中心</option>
+                                <option value="5">儿科</option>
+                                <option value="6">骨外科</option>
+                                <option value="7">眼科</option>
+                                <option value="8">口腔科</option>
+                                <option value="9">耳鼻咽喉头颈科</option>
+                                <option value="10">肿瘤科</option>
+                                <option value="11">皮肤性病科</option>
+                                <option value="12">男性学科</option>
+                                <option value="13">皮肤美容</option>
+                                <option value="14">烧伤科</option>
+                                <option value="15">精神心理科</option>
+                                <option value="16">中医科</option>
+                                <option value="17">中西医结合科</option>
+                                <option value="18">传染病科</option>
+                                <option value="19">结核病科</option>
+                                <option value="20">介入医学科</option>
+                                <option value="21">康复医学科</option>
+                                <option value="22">运动医学科</option>
+                                <option value="23">麻醉医学科</option>
+                                <option value="24">职业病科</option>
+                                <option value="25">地方病科</option>
+                                <option value="26">营养科</option>
+                                <option value="27">医学影像学</option>
+                                <option value="28">病理科</option>
+                                <option value="29">其他科室</option>
+                            </select>
+                            <select id="roomid" class="form-control">
+                                <option>---请更新科室信息---</option>
+                            </select>
+                        </div>
+                </div>
+            </div><!-- col-lg-12-->
+
+
+        </section>
+        <! --/wrapper -->
+
+    </section>
+
+    <!--main content end-->
+
+    <!--**********************************************************************************************
+    Footer
+    **********************************************************************************************-->
+
+    <!--footer start-->
+    <footer class="site-footer">
+        <div class="text-center">
+            Copyright © 2018 David Bai
+            <a href="#main-content" class="go-top">
+                <i class="fa fa-angle-up"></i>
+            </a>
+        </div>
+    </footer>
+    <!--footer end-->
+</section>
+
+<div class="modal fade" id="infobox">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> 确认修改吗？</h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn_m_save"><b class="fa fa-circle-o"></b> 保存修改</button>
+                <button data-dismiss="modal" class="btn btn-danger" type="button"><b class="fa fa-remove"></b> 放弃修改
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="assets/js/jquery.js"></script>
+<script src="assets/js/jquery-1.8.3.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script class="include" type="text/javascript" src="assets/js/jquery.dcjqaccordion.2.7.js"></script>
+<script src="assets/js/jquery.scrollTo.min.js"></script>
+<script src="assets/js/jquery.nicescroll.js" type="text/javascript"></script>
+<script src="assets/js/jquery.sparkline.js"></script>
+
+<!--common script for all pages-->
+<script src="assets/js/common-scripts.js"></script>
+
+<script>
+
+    $(".btn_edit").click(function () {
+        $(".btn_edit").attr("disabled", true);
+        $(".btn_save,.btn_reset").attr("disabled", false);
+    });
+
+    $(".btn_m_save").click(function () {
+
+        $.post("/infoupdate", $("#info_form").serialize(), function (data) {
+
+            $("#infobox").modal("toggle");
+            window.location.reload();
+        });
+    });
+
+    function savepwd() {
+
+        $.post("/infoupdate", $("#pwd_form").serialize(), function (data) {
+            if (data.state == 100) {
+                alert("密码修改成功!!");
+                window.location.reload();
+            } else {
+                alert(data.message)
+            }
+        });
+    }
+
+    var deptid = $(".deptid").val();
+    var id = deptid.split("-")[0];
+
+    $("#deptid").val(id);
+    $.get("/cgetdept", {deptid: $("#deptid").val()}, function (data) {
+        $("#roomid").text("");
+        var depts = data.data;
+        $.each(depts, function (index, content) {
+            $("#roomid").append("<option value='" + content.deptid + "'>" + content.dname);
+        });
+    });
+    $("#roomid").val(deptid);
+
+    $("#deptid").change(function () {
+        $.get("/cgetdept", {deptid: $("#deptid").val()}, function (data) {
+            $("#roomid").text("");
+            var depts = data.data;
+            $.each(depts, function (index, content) {
+                $("#roomid").append("<option value='" + content.deptid + "'>" + content.dname);
+            });
+        });
+    });
+
+    function udDrInfo() {
+        if(!confirm("是否要保存医生信息？")){
+            return;
+        }
+        $.post("/uddrinfo",{deptid:$("#roomid").val()},function (data) {
+            alert(data.message);
+            if(data.state == 100){
+                location.reload();
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

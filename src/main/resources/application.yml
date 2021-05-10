@@ -1,0 +1,50 @@
+#Tomcat-Server
+server:
+  tomcat:
+    max-threads: 10
+    min-spare-threads: 10
+  port: 8080
+#Mysql
+spring:
+  datasource:
+#    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/hospital?useSSL=false&characterEncoding=utf8&allowMultiQueries=true
+    username: hiuser
+    password: hipwd
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd
+    joda-date-time-format: yyyy-MM-dd HH:mm:ss
+  resources:
+      static-locations: classpath:/web/assets/,classpath:/web/
+  jpa:
+    show-sql: true
+#  File-Upload/File-Download
+  thymeleaf:
+    cache: false
+    prefix: classpath:/web/
+    suffix: .html
+#    关闭html严格模式
+    mode: LEGACYHTML5
+    encoding: utf-8
+
+
+
+#File-Size-Limit
+  http:
+    multipart:
+      max-file-size: 10Mb
+      max-request-size: 10Mb
+    encoding:
+      charset: utf-8
+#logging
+logging:
+  level: debug
+
+#Mybatis
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    multiple-result-sets-enabled: true
