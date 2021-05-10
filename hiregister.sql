@@ -1,28 +1,13 @@
-/*
-Navicat MySQL Data Transfer
-
-Source Server         : MySQL
-Source Server Version : 50718
-Source Host           : localhost:3306
-Source Database       : hospital
-
-Target Server Type    : MYSQL
-Target Server Version : 50718
-File Encoding         : 65001
-
-Date: 2018-06-13 00:10:45
-*/
-
 -- Create user hiuser & set password hipwd
-CREATE USER `hiuser`@`%` IDENTIFIED BY 'hipwd';
+CREATE USER `hiuser`@`%` IDENTIFIED WITH mysql_native_password BY 'hipwd';
 
 -- Create database
-CREATE DATABASE `hospital` CHARACTER SET 'utf8' COLLATE 'utf8_bin';
+CREATE DATABASE `hiregister` CHARACTER SET 'utf8' COLLATE 'utf8_bin';
 
 -- Add hiuser rights
-GRANT Alter, Alter Routine, Create, Create Routine, Create Temporary Tables, Create View, Delete, Drop, Event, Execute, Grant Option, Index, Insert, Lock Tables, References, Select, Show View, Trigger, Update ON `hospital`.* TO `hiuser`@`%`;
+GRANT Alter, Alter Routine, Create, Create Routine, Create Temporary Tables, Create View, Delete, Drop, Event, Execute, Grant Option, Index, Insert, Lock Tables, References, Select, Show View, Trigger, Update ON `hiregister`.* TO `hiuser`@`%`;
 
-use hospital;
+use hiregister;
 
 
 SET FOREIGN_KEY_CHECKS=0;
